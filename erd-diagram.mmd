@@ -1,0 +1,159 @@
+erDiagram
+    users ||--o| medical_profiles : has
+    users ||--o| doctors : "can be"
+    users ||--o{ emergency_alerts : creates
+    users ||--o{ consultations : "books as patient"
+    users ||--o{ notifications : receives
+    users ||--o{ messages : sends
+    users ||--o{ reviews : writes
+    
+    doctors ||--o{ consultations : provides
+    doctors ||--o{ reviews : receives
+    
+    ambulances ||--o{ emergency_alerts : handles
+    ambulances }o--|| users : "driven by"
+    
+    consultations ||--o{ messages : contains
+    consultations ||--o{ prescriptions : generates
+    consultations ||--o| reviews : "can have"
+    
+    users {
+        bigint id PK
+        string name
+        string email UK
+        string password
+        string phone
+        enum role
+        timestamp email_verified_at
+        string remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    medical_profiles {
+        bigint id PK
+        bigint user_id FK
+        enum blood_type
+        date date_of_birth
+        enum gender
+        int height
+        int weight
+        json chronic_diseases
+        json allergies
+        json current_medications
+        string emergency_contact_name
+        string emergency_contact_phone
+        string insurance_number
+        string insurance_provider
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    doctors {
+        bigint id PK
+        bigint user_id FK
+        string specialization
+        string license_number UK
+        int years_of_experience
+        text clinic_address
+        decimal consultation_fee
+        json available_days
+        json available_hours
+        text bio
+        boolean is_verified
+        decimal rating
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    emergency_alerts {
+        bigint id PK
+        bigint user_id FK
+        decimal latitude
+        decimal longitude
+        string address
+        enum status
+        bigint ambulance_id FK
+        timestamp dispatched_at
+        timestamp arrived_at
+        timestamp completed_at
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    ambulances {
+        bigint id PK
+        string vehicle_number
+        bigint driver_id FK
+        decimal current_latitude
+        decimal current_longitude
+        enum status
+        string vehicle_type
+        json equipment_list
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    consultations {
+        bigint id PK
+        bigint patient_id FK
+        bigint doctor_id FK
+        date appointment_date
+        time appointment_time
+        enum status
+        enum consultation_type
+        text symptoms
+        text diagnosis
+        text prescription
+        text notes
+        string meeting_link
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    messages {
+        bigint id PK
+        bigint consultation_id FK
+        bigint sender_id FK
+        text message
+        string attachment_url
+        boolean is_read
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    prescriptions {
+        bigint id PK
+        bigint consultation_id FK
+        string medication_name
+        string dosage
+        string frequency
+        string duration
+        text instructions
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    reviews {
+        bigint id PK
+        bigint doctor_id FK
+        bigint patient_id FK
+        bigint consultation_id FK
+        int rating
+        text comment
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    notifications {
+        bigint id PK
+        bigint user_id FK
+        enum type
+        string title
+        text message
+        json data
+        boolean is_read
+        timestamp created_at
+        timestamp updated_at
+    }
